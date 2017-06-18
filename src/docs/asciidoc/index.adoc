@@ -1,0 +1,52 @@
+= Build cache: _much_ faster builds
+:title-slide-background-image: title.jpeg
+:title-slide-transition: zoom
+:title-slide-transition-speed: fast
+:revnumber: {project-version}
+ifndef::imagesdir[:imagesdir: images]
+ifndef::sourcedir[:sourcedir: ../java]
+:deckjs_transition: fade
+:navigation:™
+:menu:
+:status:
+
+Lóránt Pintér (https://twitter.com/lptr[@lptr]), Gradle
+
+// Build cache is less of a complete new feature, and more a step in a general direction of much-much faster builds
+
+== Incremental build
+
+- local development
+- one change at a time
+
+=== Limitations
+
+- small scope both in time and space
+- "best-effort"
+
+== How much _faster?_
+
+// Hard to do things: caching and cache measurement
+// Depends on many factors: type of change, structure of the code, what else is happening on the computer etc.
+
+
+// ----------------------
+
+
+// [%notitle] before title
+// image::questions.jpg[background, size=cover]
+
+== More resources
+
+* Slides:
+    - https://github.com/big-guy/gs-2017-cacheability[]
+* Demos:
+    - https://github.com/wolfs/summit-2017-examples[]
+* Build Cache Guide:
+    - https://guides.gradle.org/using-build-cache[]
+
+Learn more at https://gradle.org[www.gradle.org]
+
+[%notitle]
+== Thanks
+image::outro.jpeg[background, size=cover]
