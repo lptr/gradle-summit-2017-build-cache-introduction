@@ -9,43 +9,170 @@ ifndef::sourcedir[:sourcedir: ../java]
 :navigation:™
 :menu:
 :status:
+:icons: font
 
 Lóránt Pintér (https://twitter.com/lptr[@lptr]), Gradle
 
-// Build cache is less of a complete new feature, and more a step in a general direction of much-much faster builds
+== Agenda
+
+* What's new and what isn't
+* What can you expect today
+* What's next
+
+TIP: Hello
 
 == Incremental build
 
-- local development
-- one change at a time
+// Build cache is less of a complete new feature, and more a step in a general direction of much-much faster builds
+
+=== How it works
+
+1. check inputs
+2. check outputs
+3. profit! (if all the same)
+
+=== Designed for
+
+[cols="50a,50a"]
+|===
+|
+* local development
+* one change at a time
+|image:build-scans.png[]
+|===
 
 === Limitations
 
-- small scope both in time and space
-- "best-effort"
+* small scope both in time and space
+* "best-effort"
+
+== Build cache
+
+=== What is _build cache?_
+
+*content-addressable semi-permanent storage*
+
+_(with a few tricks...)_
+
+=== Task output caching
+
+* *content:* task's output
+* *address:* task's inputs (hash)
+
+=== How it works
+
+1. hash task inputs into _cache key_
+2. load task outputs from cache
+3. profit!
+
+=== Local cache
+
+* working on branches
+* `git bisect`
+
+=== Correctness issues
+
+* uses same metadata__*__ as incremental build
+* more permanent, no `clean` to fix things
+
+_* -- that can be faulty_
+
+=== Fix it for good
+
+// Mention: different outputs for compile tasks
+
+* better stale file cleanup
+* track Java version
+* new warnings
+* enforce exclusive outputs
+* disable caching when unsafe
+
+=== Fix it for good #2
+
+* better documentation
+** user guide chapter for inputs and outputs
+** build cache guide
+
+=== Shared cache
+
+* helps when working in teams
+* speeds up CI builds
+* speeds up developer builds
+* new concept: *relocatability*!
+
+=== Relocatability
+
+[source,groovy]
+----
+@CacheableTask
+class CustomTask extends DefaultTask {
+  @PathSensitive(PathSensitivity.RELATIVE)
+  @InputDirectory
+  File sourceDirectory
+
+  @OutputFile
+  File outputFile
+
+  @TaskAction
+  void doSomething() {
+    // ...
+  }
+}
+----
+
+=== Path sensitivity
+
+* `ABSOLUTE` -- is the default
+* `RELATIVE` -- discards common directory part
+* `NAME_ONLY` -- keeps the file name only
+* `NONE` -- ignores path completely
+
+=== Go slow
+
+* tasks are marked with `@CacheableTask`
+* Java supported in Gradle 4.0
+* caching support in Android plugin 3.0
+* full Scala, Groovy and native support coming
+* no support for custom tasks (yet)
 
 == How much _faster?_
 
-// Hard to do things: caching and cache measurement
-// Depends on many factors: type of change, structure of the code, what else is happening on the computer etc.
 
 
-// ----------------------
+== Summary
+
+Like _incremental build,_ but:
+
+* work across time
+* works across space
 
 
-// [%notitle] before title
-// image::questions.jpg[background, size=cover]
+== Roadmap
+
+* Incremental build ✅
+* Task output caching ✅
+* Containerized build
+* Distributed build
+
+
+== Other talks
+
+* *Moving existing builds towards full cacheability*
+  * Tomorrow 1pm in MEDITERRANEAN III
+  * _Stefan Wolf_ and _Sterling Greene_
+* *Maximizing incrementality*
+  * Tomorrow 4.40pm in MEDITERRANEAN III
+  * _Cédric Champeau_
+
 
 == More resources
 
 * Slides:
-    - https://github.com/big-guy/gs-2017-cacheability[]
-* Demos:
-    - https://github.com/wolfs/summit-2017-examples[]
+  * https://github.com/lptr/gradle-summit-2017-build-cache-introduction[]
 * Build Cache Guide:
-    - https://guides.gradle.org/using-build-cache[]
+  * https://guides.gradle.org/using-build-cache[]
 
-Learn more at https://gradle.org[www.gradle.org]
+Learn more at https://gradle.org[gradle.org]
 
 [%notitle]
 == Thanks
