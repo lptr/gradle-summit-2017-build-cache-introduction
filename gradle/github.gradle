@@ -1,7 +1,7 @@
 apply plugin: 'org.ajoberstar.github-pages'
 
 githubPages {
-    repoUri = 'git@github.com:melix/rivieradev-composite-builds.git'
+    repoUri = 'git@github.com:lptr/gradle-summit-2017-build-cache-introduction.git'
     pages {
         from file("$buildDir/asciidoc/revealjs")
     }
