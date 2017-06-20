@@ -24,6 +24,8 @@ Lóránt Pintér (https://twitter.com/lptr[@lptr]), Gradle
 [cols="2*a"]
 |===
 |
+*Designed for:*
+
 * local development
 * one change at a time
 |image:history-linear.png[Moving forward in history,75%,75%]
@@ -80,6 +82,8 @@ _is-a_ feature using the build cache where:
 [cols="2*a"]
 |===
 |
+*Useful when:*
+
 * working on branches
 * `git bisect`
 |image:history-branches.png[Moving around in history,75%,75%]
@@ -90,6 +94,8 @@ _is-a_ feature using the build cache where:
 [cols="2*a"]
 |===
 |
+*Implementations:*
+
 * HTTP build cache
 * Gradle Enterprise build cache
 |image:ge-build-cache.png[GE build cache,100%,100%]
@@ -97,9 +103,16 @@ _is-a_ feature using the build cache where:
 
 === Shared cache on CI
 
-* normal reuse on host between change sets
-* roaming reuse between change sets
-* reuse between parallel builds of same change set
+[cols="2*a"]
+|===
+|
+*Reuse outputs:*
+
+* between changesets
+* between CI agents
+* between CI jobs
+|image:ci-jobs.png[CI jobs,100%,100%]
+|===
 
 === ...and for developers
 
