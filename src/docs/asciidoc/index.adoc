@@ -15,9 +15,14 @@ Lóránt Pintér (https://twitter.com/lptr[@lptr]), Gradle
 
 == Agenda
 
-* What's new and what isn't
-* What can you expect today
-* What's next
+* What is the build cache?
+* Support available today
+* Next steps
+
+== Why go _faster?_
+
+* faster{nbsp}build ->{nbsp}quicker{nbsp}feedback ->{nbsp}better{nbsp}productivity ->{nbsp}$$$
+* faster{nbsp}build ->{nbsp}fewer{nbsp}CI{nbsp}machines ->{nbsp}$$$
 
 == Incremental build
 
@@ -62,16 +67,20 @@ class CustomTask extends DefaultTask {
 
 _is-a_ *semi-permanent storage*
 
-_(with a few tricks...)_
+enabled by `--build-cache`
 
 === Task output caching
 
 _is-a_ feature using the build cache where:
 
-* the *content* is the task's _outputs,_
 * the *address* is the task's _inputs._
+* the *content* is the task's _outputs,_
+
+_(with a few tricks...)_
 
 === How it works
+
+After incremental build:
 
 1. hash task inputs into _cache key_
 2. load task outputs from cache
@@ -118,9 +127,29 @@ _is-a_ feature using the build cache where:
 
 * no need to rebuild other people's changes
 
+=== Sharing strategies
+
+- CI pushes only icon:check-circle[]
+- CI and developers push icon:minus-circle[]
+
 == How much _faster?_
 
-*33.9%*
+[.lead]
+[line-through]#*33.9%*#
+
+=== Measuring is hard
+
+- code architecture
+- build structure
+- nature of the change
+
+=== Gradle developers
+
+- slow connections
+- geographically diverse
+- one big `:core` module with 30%+ of the code
+
+_7.96% time saved_
 
 === Gradle's CI #1
 
@@ -138,17 +167,9 @@ image::cache-gains-stage-3.png[Cache gains -- stage 3,100%,100%]
 
 *62* hours saved (*32* builds)
 
-=== Gradle developers
-
-- slow connections
-- geographically diverse
-- one big `:core` module with 30%+ of the code
-
-_7.96% time saved_
-
 == "Best effort"
 
-* uses same metadata__*__ as incremental build
+* caching uses same metadata__*__ as incremental build
 * more permanent, no `clean` to fix problems
 
 _* -- that can be faulty_
@@ -160,7 +181,7 @@ _* -- that can be faulty_
 * more warnings
 * enforce exclusive outputs
 * disable caching when unsafe
-* later: better isolation
+* later: isolated execution
 
 === Fixes in Gradle
 
@@ -225,40 +246,22 @@ class ConcatenateTask extends DefaultTask {
   @TaskAction
   void concatenate() {
     outputFile.createNewFile()
-    sourceFiles.each {
+    sourceFiles.sort().each {
       outputFile << it.text + '\n'
     }
   }
 }
 ----
 
-
 == Summary
 
-* like _incremental build,_ but works across time and space
+* improves on _incremental build_ feature
+* works across time and space
 * we need to do more work
-* you need to do some work
-* Java support available
-* Android, native support coming
+* you need to do some work (relocatability!)
 * custom tasks later
-
-=== Roadmap
-
-* Incremental build ✅
-* Task output caching ✅
-* Containerized build
-* Distributed build
-
-
-== Other talks
-
-* *Moving existing builds towards full cacheability*
-** Tomorrow 1pm in MEDITERRANEAN III
-** _Stefan Wolf_ and _Sterling Greene_
-* *Maximizing incrementality*
-** Tomorrow 4.40pm in MEDITERRANEAN III
-** _Cédric Champeau_
-
+* Java support available in 4.0
+* Android, native support coming soon
 
 == More resources
 
@@ -270,6 +273,17 @@ class ConcatenateTask extends DefaultTask {
 ** https://gradle.com/build-cache[]
 
 Learn more at https://gradle.org[gradle.org]
+
+=== Other talks
+
+* *Moving existing builds towards full cacheability*
+** Tomorrow 1pm in MEDITERRANEAN III
+** _Stefan Wolf_ and _Sterling Greene_
+* *Maximizing incrementality*
+** Tomorrow 4.40pm in MEDITERRANEAN III
+** _Cédric Champeau_
+
+== Q & A
 
 [%notitle]
 == Thanks
