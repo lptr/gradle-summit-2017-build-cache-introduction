@@ -83,6 +83,9 @@ body {
   position: absolute;
   -webkit-transform: translate(0, 100%);
 }
+.title div.preamble {
+    margin-bottom: -1em;
+}
 .title h1, .preamble p {
   color: white;
   text-align: center;
