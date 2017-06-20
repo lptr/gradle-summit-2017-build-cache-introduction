@@ -128,7 +128,7 @@ Code quality checks: *-25.7%*
 
 image::cache-gains-stage-1.png[Cache gains -- stage 1,100%,100%]
 
-Hours saved: *3*
+*3* hours saved (*42* builds)
 
 === Gradle's CI #2
 
@@ -136,7 +136,7 @@ Linux & Windows integration tests: *-33.9%*
 
 image::cache-gains-stage-3.png[Cache gains -- stage 3,100%,100%]
 
-Hours saved: *62*
+*62* hours saved (*32* builds)
 
 === Gradle developers
 
