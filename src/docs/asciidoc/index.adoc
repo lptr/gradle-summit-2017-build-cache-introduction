@@ -107,7 +107,7 @@ _is-a_ feature using the build cache where:
 
 == How much _faster?_
 
-==== 26.4%
+=== 26.4%
 
 === Gradle's CI build
 
