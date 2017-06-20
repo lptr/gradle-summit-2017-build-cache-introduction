@@ -107,13 +107,33 @@ _is-a_ feature using the build cache where:
 
 == How much _faster?_
 
-==== 33.9%
+*33.9%*
 
-=== Gradle's CI build
+=== Gradle's CI #1
 
-image::cache-gains.png[Cache gains,100%,100%]
+Code quality checks: *-25.7%*
 
-== Correctness issues
+image::cache-gains-stage-1.png[Cache gains -- stage 1,100%,100%]
+
+Hours saved: *3*
+
+=== Gradle's CI #2
+
+Linux & Windows integration tests: *-33.9%*
+
+image::cache-gains-stage-3.png[Cache gains -- stage 3,100%,100%]
+
+Hours saved: *62*
+
+=== Gradle developers
+
+- slow connections
+- geographically diverse
+- one big `:core` module with 30%+ of the code
+
+_7.96% time saved_
+
+== "Best effort"
 
 * uses same metadata__*__ as incremental build
 * more permanent, no `clean` to fix problems
@@ -178,8 +198,8 @@ class CustomTask extends DefaultTask {
 * caching support coming in Android plugin 3.0
 * full Scala, Groovy and native support coming
 
+[%notitle]
 === Example
-
 
 [source,groovy]
 ----
@@ -202,13 +222,14 @@ class ConcatenateTask extends DefaultTask {
 
 == Summary
 
-Like _incremental build,_ but:
+* like _incremental build,_ but works across time and space
+* we need to do more work
+* you need to do some work
+* Java support available
+* Android, native support coming
+* custom tasks later
 
-* works across time
-* works across space
-
-
-== Roadmap
+=== Roadmap
 
 * Incremental build ✅
 * Task output caching ✅
