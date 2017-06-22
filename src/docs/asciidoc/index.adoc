@@ -86,7 +86,7 @@ After incremental build:
 2. load task outputs from cache
 3. profit!
 
-=== Local cache
+=== Local build cache
 
 [cols="2*a"]
 |===
@@ -98,7 +98,7 @@ After incremental build:
 |image:history-branches.png[Moving around in history,75%,75%]
 |===
 
-=== Shared cache
+=== Shared build caches
 
 [cols="2*a"]
 |===
@@ -142,6 +142,7 @@ After incremental build:
 - code architecture
 - build structure
 - nature of the change
+- what tasks are cached
 
 === Gradle developers
 
@@ -166,6 +167,10 @@ Linux & Windows integration tests: *-33.9%*
 image::cache-gains-stage-3.png[Cache gains -- stage 3,100%,100%]
 
 *62* hours saved (*32* builds)
+
+=== Statistics
+
+image::ge-cache-stats.png[GE cache statistics,100%,100%]
 
 == "Best effort"
 
@@ -257,20 +262,20 @@ class ConcatenateTask extends DefaultTask {
 
 * improves on _incremental build_ feature
 * works across time and space
-* we need to do more work
-* you need to do some work (relocatability!)
-* custom tasks later
 * Java support available in 4.0
 * Android, native support coming soon
+* custom tasks later
+  * we need to do more work
+  * you need to do some work (relocatability!)
 
 == More resources
 
-* Slides:
-** https://github.com/lptr/gradle-summit-2017-build-cache-introduction[]
 * Build Cache Guide:
 ** https://guides.gradle.org/using-build-cache[]
 * Gradle Enterprise cache:
 ** https://gradle.com/build-cache[]
+* Slides:
+** https://github.com/lptr/gradle-summit-2017-build-cache-introduction[]
 
 Learn more at https://gradle.org[gradle.org]
 
