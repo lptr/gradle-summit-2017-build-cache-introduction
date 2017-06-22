@@ -42,6 +42,8 @@ Lóránt Pintér (https://twitter.com/lptr[@lptr]), Gradle
 2. check task's outputs
 3. profit!
 
+`:compileJava UP-TO-DATE`
+
 === Metadata
 
 [source,groovy]
@@ -164,7 +166,7 @@ image::cache-gains-stage-3.png[Cache gains -- stage 3,100%,100%]
 
 image::ge-cache-stats.png[GE cache statistics,100%,100%]
 
-== "Best effort"
+== Challenges
 
 * caching uses same metadata__*__ as incremental build
 * more permanent, no `clean` to fix problems
@@ -221,16 +223,29 @@ class CustomTask extends DefaultTask {
 // * `NAME_ONLY` -- keeps the file name only
 // * `NONE` -- ignores path completely
 
-=== We want to go slow
+[%notitle]
+=== Unsorted example
 
-* opt-in: tasks are marked with `@CacheableTask`
-** no support for custom tasks yet
-* Java projects supported in Gradle 4.0
-* caching support coming in Android plugin 3.0
-* full Scala, Groovy and native support coming
+[source,groovy]
+----
+@CacheableTask
+class ConcatenateTask extends DefaultTask {
+  @PathSensitive(PathSensitivity.NONE)
+  @InputFiles FileCollection sourceFiles
+  @OutputFile File outputFile
+
+  @TaskAction
+  void concatenate() {
+    outputFile.createNewFile()
+    sourceFiles.each {
+      outputFile << it.text + '\n'
+    }
+  }
+}
+----
 
 [%notitle]
-=== Example
+=== Sorted example
 
 [source,groovy]
 ----
@@ -250,13 +265,13 @@ class ConcatenateTask extends DefaultTask {
 }
 ----
 
-== Build cache...
+== Roadmap
 
-* improves on _incremental build_ feature
-* works across time and space
-* Java support available in 4.0
-* Android, native support coming soon
-* custom tasks later
+* opt-in: tasks are marked with `@CacheableTask`
+** custom tasks support later
+* Java projects supported in Gradle 4.0
+* caching support coming in Android plugin 3.0
+* full Scala, Groovy and native support coming
 
 == More resources
 
@@ -276,6 +291,7 @@ Learn more at https://gradle.org[gradle.org]
 * *Moving existing builds towards full cacheability*
 ** Tomorrow 1pm in MEDITERRANEAN III
 ** _Stefan Wolf_ and _Sterling Greene_
+
 * *Maximizing incrementality*
 ** Tomorrow 4.40pm in MEDITERRANEAN III
 ** _Cédric Champeau_
