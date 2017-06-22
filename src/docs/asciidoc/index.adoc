@@ -258,15 +258,13 @@ class ConcatenateTask extends DefaultTask {
 }
 ----
 
-== Summary
+== Build cache...
 
 * improves on _incremental build_ feature
 * works across time and space
 * Java support available in 4.0
 * Android, native support coming soon
 * custom tasks later
-  * we need to do more work
-  * you need to do some work (relocatability!)
 
 == More resources
 
