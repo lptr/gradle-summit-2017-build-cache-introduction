@@ -1,0 +1,143 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><meta name="author" content=":navigation:™" /><title>Build cache: much faster builds</title><meta content="yes" name="apple-mobile-web-app-capable" /><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style" /><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" name="viewport" /><link href="reveal.js/css/reveal.css" rel="stylesheet" /><link rel="stylesheet" href="reveal.js/css/theme/summit.css" id="theme" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" /><link href="reveal.js/lib/css/zenburn.css" rel="stylesheet" /><script>document.write( '<link rel="stylesheet" href="reveal.js/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );</script><link rel="stylesheet" type="text/css" href="reveal.js/css/theme/asciinema-player.css" />
+<link rel="stylesheet" type="text/css" href="reveal.js/css/theme/github-gist.css" />
+<script src="reveal.js/css/theme/asciinema-player.js"></script></head><body><div class="reveal"><div class="slides"><section class="title" data-state="title" data-transition="zoom" data-transition-speed="fast" data-background-image="./images/title.jpeg"><h1>Build cache</h1><h2><em>much</em> faster builds</h2><div class="preamble"><div class="paragraph"><p>Lóránt Pintér (<a href="https://twitter.com/lptr">@lptr</a>), Gradle</p></div></div><p class="author"><small>:navigation:™</small></p></section>
+<section id="agenda"><h2>Agenda</h2><div class="ulist"><ul><li><p>What is the build cache?</p></li><li><p>Support available today</p></li><li><p>Next steps</p></li></ul></div></section>
+<section id="why-go-em-faster-em"><h2>Why go <em>faster?</em></h2><div class="ulist"><ul><li><p>faster&#160;build &#8594;&#160;quicker&#160;feedback &#8594;&#160;better&#160;productivity</p></li><li><p>faster&#160;build &#8594;&#160;fewer&#160;CI&#160;machines</p></li></ul></div></section>
+<section><section id="incremental-build"><h2>Incremental build</h2><table class="tableblock frame-all grid-all" style="width:100%"><colgroup><col style="width:50%" /><col style="width:50%" /></colgroup><tbody><tr><td class="tableblock halign-left valign-top"><div><div class="paragraph"><p><strong>Designed for:</strong></p></div>
+<div class="ulist"><ul><li><p>local development</p></li><li><p>one change at a time</p></li></ul></div></div></td><td class="tableblock halign-left valign-top"><div><div class="paragraph"><p><span class="image"><img src="./images/history-linear.png" alt="Moving forward in history" width="75%" height="75%" /></span></p></div></div></td></tr></tbody></table></section><section id="how-it-works"><h2>How it works</h2><div class="olist arabic"><ol class="arabic"><li><p>check task&#8217;s inputs</p></li><li><p>check task&#8217;s outputs</p></li><li><p>profit!</p></li></ol></div>
+<div class="paragraph"><p><code>:compileJava UP-TO-DATE</code></p></div></section><section id="metadata"><h2>Metadata</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="groovy language-groovy">class CustomTask extends DefaultTask {
+  @InputDirectory
+  File sourceDirectory
+
+  @OutputFile
+  File outputFile
+
+  // ...
+}</code></pre></div></div></section><section id="limitations"><h2>Limitations</h2><div class="ulist"><ul><li><p>works locally</p></li><li><p>optimized for incremental changes</p></li><li><p><em>"best-effort"</em></p></li></ul></div></section></section>
+<section><section id="build-cache"><h2>Build cache</h2><div class="paragraph"><p><em>is-a</em> <strong>semi-permanent storage</strong></p></div><div class="paragraph"><p>enabled by <code>--build-cache</code></p></div></section><section id="task-output-caching"><h2>Task output caching</h2><div class="paragraph"><p><em>is-a</em> feature using the build cache where:</p></div>
+<div class="ulist"><ul><li><p>the <strong>address</strong> is the task&#8217;s <em>inputs,</em></p></li><li><p>the <strong>content</strong> is the task&#8217;s <em>outputs.</em></p></li></ul></div>
+<div class="paragraph"><p><em>(with a few tricks&#8230;&#8203;)</em></p></div></section><section id="local-build-cache"><h2>Local build cache</h2><table class="tableblock frame-all grid-all" style="width:100%"><colgroup><col style="width:50%" /><col style="width:50%" /></colgroup><tbody><tr><td class="tableblock halign-left valign-top"><div><div class="paragraph"><p><strong>Useful when:</strong></p></div>
+<div class="ulist"><ul><li><p>working on branches</p></li><li><p><code>git bisect</code></p></li></ul></div></div></td><td class="tableblock halign-left valign-top"><div><div class="paragraph"><p><span class="image"><img src="./images/history-branches.png" alt="Moving around in history" width="75%" height="75%" /></span></p></div></div></td></tr></tbody></table></section><section id="shared-build-caches"><h2>Shared build caches</h2><table class="tableblock frame-all grid-all" style="width:100%"><colgroup><col style="width:50%" /><col style="width:50%" /></colgroup><tbody><tr><td class="tableblock halign-left valign-top"><div><div class="paragraph"><p><strong>Implementations:</strong></p></div>
+<div class="ulist"><ul><li><p>HTTP build cache</p></li><li><p>Gradle Enterprise build cache</p></li></ul></div></div></td><td class="tableblock halign-left valign-top"><div><div class="paragraph"><p><span class="image"><img src="./images/ge-build-cache.png" alt="GE build cache" width="100%" height="100%" /></span></p></div></div></td></tr></tbody></table></section><section id="shared-cache-on-ci"><h2>Shared cache on CI</h2><table class="tableblock frame-all grid-all" style="width:100%"><colgroup><col style="width:50%" /><col style="width:50%" /></colgroup><tbody><tr><td class="tableblock halign-left valign-top"><div><div class="paragraph"><p><strong>Reuse outputs:</strong></p></div>
+<div class="ulist"><ul><li><p>between changesets</p></li><li><p>between CI agents</p></li><li><p>between CI jobs</p></li></ul></div></div></td><td class="tableblock halign-left valign-top"><div><div class="paragraph"><p><span class="image"><img src="./images/ci-jobs.png" alt="CI jobs" width="100%" height="100%" /></span></p></div></div></td></tr></tbody></table></section><section id="shared-cache-for-developers"><h2>Shared cache for developers</h2><div class="ulist"><ul><li><p>no need to rebuild other people&#8217;s changes</p></li></ul></div></section><section id="sharing-strategies"><h2>Sharing strategies</h2><div class="ulist"><ul><li><p>CI pushes only <span class="icon"><i class="fa fa-check-circle"></i></span></p></li><li><p>CI and developers push <span class="icon"><i class="fa fa-minus-circle"></i></span></p></li></ul></div></section></section>
+<section><section id="how-much-em-faster-em"><h2>How much <em>faster?</em></h2><div class="paragraph lead"><p><span class="line-through"><strong>33.9%</strong></span></p></div></section><section id="measuring-is-hard"><h2>Measuring is hard</h2><div class="ulist"><ul><li><p>code architecture</p></li><li><p>build structure</p></li><li><p>nature of the change</p></li><li><p>what tasks are cached</p></li></ul></div></section><section id="gradle-developers"><h2>Gradle developers</h2><div class="ulist"><ul><li><p>slow connections</p></li><li><p>geographically diverse</p></li><li><p>one big <code>:core</code> module with 30%+ of the code</p></li></ul></div>
+<div class="paragraph"><p><strong>7.96%</strong> faster (<strong>167</strong> builds)</p></div></section><section id="gradle-s-ci-1"><h2>Gradle&#8217;s CI #1</h2><div class="paragraph"><p>Code quality checks: <strong>-25.7%</strong></p></div>
+<div class="imageblock" style=""><img src="./images/cache-gains-stage-1.png" alt="Cache gains -- stage 1" width="100%" height="100%" /></div>
+<div class="paragraph"><p><strong>3</strong> hours saved (<strong>42</strong> builds)</p></div></section><section id="gradle-s-ci-2"><h2>Gradle&#8217;s CI #2</h2><div class="paragraph"><p>Linux &amp; Windows integration tests: <strong>-33.9%</strong></p></div>
+<div class="imageblock" style=""><img src="./images/cache-gains-stage-3.png" alt="Cache gains -- stage 3" width="100%" height="100%" /></div>
+<div class="paragraph"><p><strong>62</strong> hours saved (<strong>32</strong> builds)</p></div></section><section id="statistics"><h2>Statistics</h2><div class="imageblock" style=""><img src="./images/ge-cache-stats.png" alt="GE cache statistics" width="100%" height="100%" /></div></section></section>
+<section><section id="challenges"><h2>Challenges</h2><div class="ulist"><ul><li><p>caching uses same metadata<em>*</em> as incremental build</p></li><li><p>more permanent, no <code>clean</code> to fix problems</p></li></ul></div><div class="paragraph"><p><em>*&#8201;&#8212;&#8201;that can be faulty</em></p></div></section><section id="fix-it-for-good"><h2>Fix it for good</h2></section><section id="for-third-party-tasks"><h2>For third-party tasks</h2><div class="ulist"><ul><li><p>more warnings</p></li><li><p>enforce good practices</p></li><li><p>disable caching when unsafe</p></li><li><p>later: isolated execution</p></li></ul></div></section><section id="fixes-in-gradle"><h2>Fixes in Gradle</h2><div class="ulist"><ul><li><p>better stale file cleanup</p></li><li><p>track Java version</p></li><li><p>remove Java-Groovy compilation overlap</p></li></ul></div></section><section id="improved-documentation"><h2>Improved documentation</h2><div class="ulist"><ul><li><p>user guide chapter for inputs and outputs</p></li><li><p>build cache guide</p></li></ul></div></section><section id="new-problems-with-sharing-outputs"><h2>New problems with sharing outputs</h2><div class="ulist"><ul><li><p>non-homogenous environments</p><div class="ulist"><ul><li><p>OS, locale, env. vars</p></li><li><p>tool versions installed</p></li></ul></div></li><li><p>new concept: <strong>relocatability</strong></p><div class="ulist"><ul><li><p>where&#8217;s your <code>$HOME</code>?</p></li></ul></div></li></ul></div></section><section id="relocatability"><h2>Relocatability</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="groovy language-groovy">class CustomTask extends DefaultTask {
+
+  @PathSensitive(PathSensitivity.RELATIVE)
+  @InputDirectory
+  File sourceDirectory
+
+  // ...
+}</code></pre></div></div></section><section id="unsorted-example"><div class="listingblock"><div class="content"><pre class="highlight"><code class="groovy language-groovy">@CacheableTask
+class ConcatenateTask extends DefaultTask {
+  @PathSensitive(PathSensitivity.NONE)
+  @InputFiles FileCollection sourceFiles
+  @OutputFile File outputFile
+
+  @TaskAction
+  void concatenate() {
+    outputFile.createNewFile()
+    sourceFiles.each {
+      outputFile &lt;&lt; it.text + '\n'
+    }
+  }
+}</code></pre></div></div></section><section id="sorted-example"><div class="listingblock"><div class="content"><pre class="highlight"><code class="groovy language-groovy">@CacheableTask
+class ConcatenateTask extends DefaultTask {
+  @PathSensitive(PathSensitivity.NONE)
+  @InputFiles FileCollection sourceFiles
+  @OutputFile File outputFile
+
+  @TaskAction
+  void concatenate() {
+    outputFile.createNewFile()
+    sourceFiles.sort().each {
+      outputFile &lt;&lt; it.text + '\n'
+    }
+  }
+}</code></pre></div></div></section></section>
+<section id="roadmap"><h2>Roadmap</h2><div class="ulist"><ul><li><p>opt-in: tasks are marked with <code>@CacheableTask</code></p><div class="ulist"><ul><li><p>custom tasks support later</p></li></ul></div></li><li><p>Java projects supported in Gradle 4.0</p></li><li><p>caching support coming in Android plugin 3.0</p></li><li><p>full Scala, Groovy and native support coming</p></li></ul></div></section>
+<section><section id="more-resources"><h2>More resources</h2><div class="ulist"><ul><li><p>Build Cache Guide:</p><div class="ulist"><ul><li><p><a href="https://guides.gradle.org/using-build-cache" class="bare">https://guides.gradle.org/using-build-cache</a></p></li></ul></div></li><li><p>Gradle Enterprise cache:</p><div class="ulist"><ul><li><p><a href="https://gradle.com/build-cache" class="bare">https://gradle.com/build-cache</a></p></li></ul></div></li><li><p>Slides:</p><div class="ulist"><ul><li><p><a href="https://github.com/lptr/gradle-summit-2017-build-cache-introduction" class="bare">https://github.com/lptr/gradle-summit-2017-build-cache-introduction</a></p></li></ul></div></li></ul></div><div class="paragraph"><p>Learn more at <a href="https://gradle.org">gradle.org</a></p></div></section><section id="summit-talks"><h2>Summit talks</h2><div class="ulist"><ul><li><p>Slack: <a href="https://gradlesummit.slack.com/archives/C5XF2THK3">#build-cache</a></p></li><li><p><strong>Moving existing builds towards full cacheability</strong></p><div class="ulist"><ul><li><p>Tomorrow 1pm in MEDITERRANEAN III</p></li><li><p><em>Stefan Wolf</em> and <em>Sterling Greene</em></p></li></ul></div></li><li><p><strong>Maximizing incrementality</strong></p><div class="ulist"><ul><li><p>Tomorrow 4.40pm in MEDITERRANEAN III</p></li><li><p><em>Cédric Champeau</em></p></li></ul></div></li></ul></div></section></section>
+<section id="q-a"><h2>Q &amp; A</h2></section>
+<section id="thanks" data-background-image="./images/outro.jpeg" data-background-size="cover"></section></div></div><script src="reveal.js/lib/js/head.min.js"></script><script src="reveal.js/js/reveal.js"></script><script>// See https://github.com/hakimel/reveal.js#configuration for a full list of configuration options
+Reveal.initialize({
+  // Display controls in the bottom right corner
+  controls: true,
+  // Display a presentation progress bar
+  progress: true,
+  // Display the page number of the current slide
+  slideNumber: true,
+  // Push each slide change to the browser history
+  history: true,
+  // Enable keyboard shortcuts for navigation
+  keyboard: true,
+  // Enable the slide overview mode
+  overview: true,
+  // Vertical centering of slides
+  center: true,
+  // Enables touch navigation on devices with touch input
+  touch: true,
+  // Loop the presentation
+  loop: false,
+  // Change the presentation direction to be RTL
+  rtl: false,
+  // Turns fragments on and off globally
+  fragments: true,
+  // Flags if the presentation is running in an embedded mode,
+  // i.e. contained within a limited portion of the screen
+  embedded: false,
+  // Number of milliseconds between automatically proceeding to the
+  // next slide, disabled when set to 0, this value can be overwritten
+  // by using a data-autoslide attribute on your slides
+  autoSlide: 0,
+  // Stop auto-sliding after user input
+  autoSlideStoppable: true,
+  // Enable slide navigation via mouse wheel
+  mouseWheel: false,
+  // Hides the address bar on mobile devices
+  hideAddressBar: true,
+  // Opens links in an iframe preview overlay
+  previewLinks: false,
+  // Theme (e.g., beige, black, league, night, serif, simple, sky, solarized, white)
+  // NOTE setting the theme in the config no longer works in reveal.js 3.x
+  //theme: Reveal.getQueryHash().theme || 'summit',
+  // Transition style (e.g., none, fade, slide, convex, concave, zoom)
+  transition: Reveal.getQueryHash().transition || 'linear',
+  // Transition speed (e.g., default, fast, slow)
+  transitionSpeed: 'default',
+  // Transition style for full page slide backgrounds (e.g., none, fade, slide, convex, concave, zoom)
+  backgroundTransition: 'fade',
+  // Number of slides away from the current that are visible
+  viewDistance: 3,
+  // Parallax background image (e.g., "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'")
+  parallaxBackgroundImage: '',
+  // Parallax background size in CSS syntax (e.g., "2100px 900px")
+  parallaxBackgroundSize: '',
+
+  // The "normal" size of the presentation, aspect ratio will be preserved
+  // when the presentation is scaled to fit different resolutions. Can be
+  // specified using percentage units.
+  width: 960,
+  height: 700,
+
+  // Factor of the display size that should remain empty around the content
+  margin: 0.1,
+
+  // Bounds for smallest/largest possible scale to apply to content
+  minScale: 0.2,
+  maxScale: 1.5,
+
+  // Optional libraries used to extend on reveal.js
+  dependencies: [
+      { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+      { src: 'reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+  ]
+});</script></body></html>
