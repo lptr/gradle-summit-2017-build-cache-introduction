@@ -21,8 +21,8 @@ Lóránt Pintér (https://twitter.com/lptr[@lptr]), Gradle
 
 == Why go _faster?_
 
-* faster{nbsp}build ->{nbsp}quicker{nbsp}feedback ->{nbsp}better{nbsp}productivity ->{nbsp}$$$
-* faster{nbsp}build ->{nbsp}fewer{nbsp}CI{nbsp}machines ->{nbsp}$$$
+* faster{nbsp}build ->{nbsp}quicker{nbsp}feedback ->{nbsp}better{nbsp}productivity
+* faster{nbsp}build ->{nbsp}fewer{nbsp}CI{nbsp}machines
 
 == Incremental build
 
@@ -38,9 +38,9 @@ Lóránt Pintér (https://twitter.com/lptr[@lptr]), Gradle
 
 === How it works
 
-1. check inputs
-2. check outputs
-3. profit! (if all the same)
+1. check task's inputs
+2. check task's outputs
+3. profit!
 
 === Metadata
 
@@ -59,7 +59,7 @@ class CustomTask extends DefaultTask {
 
 === Limitations
 
-* works only locally
+* works locally
 * optimized for incremental changes
 * _"best-effort"_
 
@@ -73,18 +73,10 @@ enabled by `--build-cache`
 
 _is-a_ feature using the build cache where:
 
-* the *address* is the task's _inputs._
-* the *content* is the task's _outputs,_
+* the *address* is the task's _inputs,_
+* the *content* is the task's _outputs._
 
 _(with a few tricks...)_
-
-=== How it works
-
-After incremental build:
-
-1. hash task inputs into _cache key_
-2. load task outputs from cache
-3. profit!
 
 === Local build cache
 
@@ -123,7 +115,7 @@ After incremental build:
 |image:ci-jobs.png[CI jobs,100%,100%]
 |===
 
-=== ...and for developers
+=== Shared cache for developers
 
 * no need to rebuild other people's changes
 
@@ -150,7 +142,7 @@ After incremental build:
 - geographically diverse
 - one big `:core` module with 30%+ of the code
 
-_7.96% time saved_
+*7.96%* faster (*167* builds)
 
 === Gradle's CI #1
 
@@ -184,7 +176,7 @@ _* -- that can be faulty_
 === For third-party tasks
 
 * more warnings
-* enforce exclusive outputs
+* enforce good practices
 * disable caching when unsafe
 * later: isolated execution
 
@@ -222,12 +214,12 @@ class CustomTask extends DefaultTask {
 }
 ----
 
-=== Path sensitivity
-
-* `ABSOLUTE` -- is the default
-* `RELATIVE` -- discards common directory part
-* `NAME_ONLY` -- keeps the file name only
-* `NONE` -- ignores path completely
+// === Path sensitivity
+//
+// * `ABSOLUTE` -- is the default
+// * `RELATIVE` -- discards common directory part
+// * `NAME_ONLY` -- keeps the file name only
+// * `NONE` -- ignores path completely
 
 === We want to go slow
 
@@ -277,7 +269,9 @@ class ConcatenateTask extends DefaultTask {
 
 Learn more at https://gradle.org[gradle.org]
 
-=== Other talks
+=== Summit talks
+
+* Slack: https://gradlesummit.slack.com/archives/C5XF2THK3[#build-cache]
 
 * *Moving existing builds towards full cacheability*
 ** Tomorrow 1pm in MEDITERRANEAN III
